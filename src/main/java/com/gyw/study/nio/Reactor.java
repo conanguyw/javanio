@@ -31,10 +31,12 @@ public class Reactor implements Runnable {
     }
 
     public void init() {
-        try (ServerSocketChannel socketChannel = ServerSocketChannel.open()){
+        ServerSocketChannel socketChannel=null;
+        Selector selector =null;
+        try {
             // 创建通道和选择器
-
-            Selector selector = Selector.open();
+            socketChannel = ServerSocketChannel.open();
+            selector = Selector.open();
             InetSocketAddress inetSocketAddress = new InetSocketAddress(
                     InetAddress.getLocalHost(), 4700);
             socketChannel.socket().bind(inetSocketAddress);
@@ -48,6 +50,7 @@ public class Reactor implements Runnable {
         } catch (Exception e) {
             // TODO: handle exception
         }finally {
+
         }
     }
 
