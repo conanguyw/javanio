@@ -97,6 +97,10 @@ public class NIOServer {
                 client.register(selector, SelectionKey.OP_WRITE);
             }
         } else if (selectionKey.isWritable()) {
+            try {
+                Thread.sleep(1000);
+            }catch(Exception e) {
+            }
             //将缓冲区清空以备下次写入
             sendbuffer.clear();
             // 返回为之创建此键的通道。
