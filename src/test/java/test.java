@@ -20,6 +20,6 @@ public class test {
         for (String a:list) {
             list1.add(a);
         }
-        System.out.println(1<<4);
+        System.out.println(16| 4);
     }
 }

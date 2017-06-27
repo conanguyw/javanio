@@ -31,7 +31,6 @@ public class NIOClient2 {
     private final static InetSocketAddress SERVER_ADDRESS = new InetSocketAddress("localhost", 8888);
 
     public static void main(String[] args) throws IOException {
-        // TODO Auto-generated method stub
         // 打开socket通道
         SocketChannel socketChannel = SocketChannel.open();
         // 设置为非阻塞方式

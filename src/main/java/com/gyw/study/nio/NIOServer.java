@@ -14,20 +14,21 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Set;
+
 /**
  * @author gyw33188
  * @version $Id: NIOServer.java, v0.1 2017/6/16 gyw33188 Exp $$
  */
 public class NIOServer {
     /*标识数字*/
-    private  int flag = 0;
+    private int        flag          = 0;
     /*缓冲区大小*/
-    private  int BLOCK = 4096;
+    private int        BLOCK         = 4096;
     /*接受数据缓冲区*/
-    private  ByteBuffer sendbuffer = ByteBuffer.allocate(BLOCK);
+    private ByteBuffer sendbuffer    = ByteBuffer.allocate(BLOCK);
     /*发送数据缓冲区*/
-    private  ByteBuffer receivebuffer = ByteBuffer.allocate(BLOCK);
-    private  Selector selector;
+    private ByteBuffer receivebuffer = ByteBuffer.allocate(BLOCK);
+    private Selector   selector;
 
     public NIOServer(int port) throws IOException {
         // 打开服务器套接字通道
@@ -41,10 +42,9 @@ public class NIOServer {
         // 通过open()方法找到Selector
         selector = Selector.open();
         // 注册到selector，等待连接
-        serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+        serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT|SelectionKey.OP_WRITE);
         System.out.println("Server Start----8888:");
     }
-
 
     // 监听
     private void listen() throws IOException {
@@ -59,7 +59,7 @@ public class NIOServer {
                 iterator.remove();
                 handleKey(selectionKey);
             }
-            if (flag < 0){
+            if (flag < 0) {
                 break;
             }
         }
@@ -72,7 +72,7 @@ public class NIOServer {
         SocketChannel client = null;
         String receiveText;
         String sendText;
-        int count=0;
+        int count = 0;
         // 测试此键的通道是否已准备好接受新的套接字连接。
         if (selectionKey.isAcceptable()) {
             // 返回为之创建此键的通道。
@@ -92,27 +92,27 @@ public class NIOServer {
             //读取服务器发送来的数据到缓冲区中
             count = client.read(receivebuffer);
             if (count > 0) {
-                receiveText = new String( receivebuffer.array(),0,count);
-                System.out.println("服务器端接受客户端数据--:"+receiveText);
+                receiveText = new String(receivebuffer.array(), 0, count);
+                System.out.println("服务器端接受客户端数据--:" + receiveText);
                 client.register(selector, SelectionKey.OP_WRITE);
             }
         } else if (selectionKey.isWritable()) {
             try {
                 Thread.sleep(1000);
-            }catch(Exception e) {
+            } catch (Exception e) {
             }
             //将缓冲区清空以备下次写入
             sendbuffer.clear();
             // 返回为之创建此键的通道。
             client = (SocketChannel) selectionKey.channel();
-            sendText="message from server--" + flag++;
+            sendText = "message from server--" + flag++;
             //向缓冲区中输入数据
             sendbuffer.put(sendText.getBytes());
             //将缓冲区各标志复位,因为向里面put了数据标志被改变要想从中读取数据发向服务器,就要复位
             sendbuffer.flip();
             //输出到通道
             client.write(sendbuffer);
-            System.out.println("服务器端向客户端发送数据--："+sendText);
+            System.out.println("服务器端向客户端发送数据--：" + sendText);
             client.register(selector, SelectionKey.OP_READ);
         }
     }
